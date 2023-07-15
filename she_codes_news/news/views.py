@@ -10,12 +10,15 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         '''Return all news stories.'''
-        return NewsStory.objects.all()
-
+        return NewsStory.objects.all().order_by("-pub_date", "title")
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['latest_stories'] = NewsStory.objects.all()[:4]
+        context['latest_stories'] = NewsStory.objects.order_by("-pub_date", "title").all()[:4]
+        context['all_stories'] = NewsStory.objects.order_by("-pub_date", "title")
+        #print(NewsStory.objects.all()[:4])
         return context
+
 
 class StoryView(generic.DetailView):
     model = NewsStory
@@ -27,3 +30,7 @@ class AddStoryView(generic.CreateView):
     context_object_name = 'storyform'
     template_name = 'news/createStory.html'
     success_url = reverse_lazy('news:index')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
