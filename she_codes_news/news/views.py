@@ -1,11 +1,10 @@
+from django.views import View
 from django.views import generic
 from django.urls import reverse_lazy
 from .models import NewsStory
 from .forms import CommentForm, StoryForm
 from django.views.generic.edit import FormView
-from django.shortcuts import get_object_or_404
-
-
+from django.shortcuts import render, redirect, get_object_or_404
 
 
 
@@ -30,6 +29,15 @@ class StoryView(generic.DetailView):
     template_name = 'news/story.html'
     context_object_name = 'story'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        story = self.get_object()
+        # Order comments by their created_date in descending order (most recent first)
+        context['comments'] = story.comments.filter(approved_comment=True).order_by('-created_date')
+        context['form'] = CommentForm()
+        return context
+
+
 class AddStoryView(generic.CreateView):
     form_class = StoryForm
     context_object_name = 'storyform'
@@ -47,21 +55,25 @@ def get_success_url(self):
     return reverse_lazy('news:story', kwargs={'pk': news_story.pk})
 
 
-class AddCommentView(FormView):
-    form_class = CommentForm
-    success_url = reverse_lazy('news:index')
+class AddCommentView(View):
+    def post(self, request, pk):
+        news_story = get_object_or_404(NewsStory, pk=pk)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = news_story
+            comment.save()
+        
+        # Get the updated list of comments for the story
+        comments = news_story.comments.filter(approved_comment=True)
 
-    def form_valid(self, form):
-        news_story = get_object_or_404(NewsStory, pk=self.kwargs['pk'])
-        comment = form.save(commit=False)
-        comment.post = news_story
-        comment.save()
-        return super().form_valid(form)
+        # Pass the updated list of comments to the template
+        return render(request, 'news/story.html', {'story': news_story, 'comments': comments})
 
-def get_object(self):
-    """Get the news story that the comment is being added to."""
-    news_story_pk = self.kwargs['pk']
-    return NewsStory.objects.get(pk=news_story_pk)
+    def get_object(self):
+        """Get the news story that the comment is being added to."""
+        news_story_pk = self.kwargs['pk']
+        return NewsStory.objects.get(pk=news_story_pk)
 
 
 
