@@ -1,8 +1,9 @@
 # news/forms.py
 
 from django import forms
-from django.forms import ModelForm
-from .models import NewsStory
+from django.forms import ModelForm, ValidationError
+from .models import NewsStory, Comment
+
 
 class StoryForm(ModelForm):
     class Meta:
@@ -18,3 +19,15 @@ class StoryForm(ModelForm):
                 }
             ),
         }
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('author', 'text')
+
+
+    def clean_text(self):
+        text = self.cleaned_data['text']
+        if len(text) < 10:
+            raise ValidationError('Comment must be at least 10 characters long.')
+        return text

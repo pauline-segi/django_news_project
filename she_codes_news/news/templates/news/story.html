@@ -17,4 +17,35 @@
         </div>
     </div>
 
+    {% if comments %}
+        <h2>Comments</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    <strong>{{ comment.author }}</strong>: {{ comment.text }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No comments yet.</p>
+    {% endif %}
+
+    <h2>Add a comment</h2>
+    {% if user.is_authenticated %}
+        <form action="{% url 'news:add_comment' pk=story.pk %}" method="post">
+            {% csrf_token %}
+            <div>
+                <label for="id_author">Name</label>
+                <input type="text" name="author" id="id_author" />
+            </div>
+            <div>
+                <label for="id_text">Comment</label>
+                <textarea name="text" id="id_text"></textarea>
+            </div>
+            <input type="submit" value="Add Comment" />
+        </form>
+    {% else %}
+        <p>Please <a href="{% url 'account_login' %}">login</a> to add a comment.</p>
+    {% endif %}
+
 {% endblock %}

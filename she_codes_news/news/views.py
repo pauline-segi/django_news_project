@@ -1,7 +1,11 @@
 from django.views import generic
 from django.urls import reverse_lazy
 from .models import NewsStory
-from .forms import StoryForm
+from .forms import CommentForm, StoryForm
+from django.views.generic.edit import FormView
+from django.shortcuts import get_object_or_404
+
+
 
 
 
@@ -35,5 +39,31 @@ class AddStoryView(generic.CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+def get_success_url(self):
+    '''Get the success URL for the form.'''
+    news_story = self.get_object()
+    return reverse_lazy('news:story', kwargs={'pk': news_story.pk})
+
+
+class AddCommentView(FormView):
+    form_class = CommentForm
+    success_url = reverse_lazy('news:index')
+
+    def form_valid(self, form):
+        news_story = get_object_or_404(NewsStory, pk=self.kwargs['pk'])
+        comment = form.save(commit=False)
+        comment.post = news_story
+        comment.save()
+        return super().form_valid(form)
+
+def get_object(self):
+    """Get the news story that the comment is being added to."""
+    news_story_pk = self.kwargs['pk']
+    return NewsStory.objects.get(pk=news_story_pk)
+
+
+
 
 

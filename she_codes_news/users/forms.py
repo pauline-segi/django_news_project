@@ -12,9 +12,10 @@ class CustomUserCreationForm(UserCreationForm):
     
 #this form below adds custom fields for the user to fill, so you can add more fields in the list below if needed
 
+
 class CustomUserChangeForm(UserChangeForm):
     
     class Meta:
         model = CustomUser
-        fields = ['username', 'email']
+        fields = ['username', 'email', 'bio']
         
