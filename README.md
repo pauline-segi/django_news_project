@@ -8,12 +8,23 @@ Starter code for the Plus Django project.
 
 ## About This Project
 
-{{ Give a brief description of your project here. What is it for, how do you useit? }}
+{{ We created a website for She Codes News using the github project template as a base line. From there, we made changes to the code by modifying views, models, forms and url files, as well as a few html files for the story. 
+
+We used a News app to hold the stories, there were some already populated, and then created a section so users could add their own stories. 
+
+We then created a Users app to allow users to create an account. This required a login/logout section which was created as well. From here, I modified the users app to allow users to view their profile. This is very basic and no css has been added. 
+
+I then decided to add a Comments section to the stories. I don't know why I decided this, just got caught up in the moment. It works in a sense that the comments are added to the database, but I just couldn't figure out how to get the comments to display on the story page. 
+
+We were asked to change the css file to make the site look awesome, but I just could not find the time to do this. I struggled on the comments section (think I went down a wormhole --- and really shouldn't have seem so much time on it as I did...) and by the end of it I just couldn't find the stamina to start working on the css. }}
 
 
 ## How To Run This Code
 
 {{
+Open a new terminal window. 
+
+
 
 Give a quick step-by-step guide on how to download and run your codebase.
 
@@ -28,7 +39,7 @@ When you need to specify terminal commands, you can surround them with backticks
 
 ## Database Schema!
 
-[ {{ My ERD }} ]( {{ ./relative_path_to_your_entity_relationship_diagram }} )
+[ {{ My ERD }} ]( {{ ./she_codes_news/news/static/news/images/erd.drawio.png }} )
 
 
 ## Project Features
